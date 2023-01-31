@@ -1,75 +1,41 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { createStore } from 'redux';
-
-
-
-const initialState = 0;
-
-const reducer = (state = 0, action) => {
- 
-  switch(action.type) {
-    case "INC": 
-    return state + 1;
-    case "DEC": 
-    return state - 1;
-    case "RND":
-      return state * action.payload;
-    default:
-      return state;
-  } 
-};
+import ReactDOM from 'react-dom';
+import { createStore, bindActionCreators } from 'redux';
+import reducer from './reducer';
+import * as actions from './action'; 
 
 const store = createStore(reducer);
 
-
-const inc = () => ({type: 'INC'});
-const dec = () => ({type: 'DEC'});
-const rnd = (value) => ({type: 'RND', payload: value});
-
-
+const {dispatch, subscribe, getState} = store;
 
 const update = () => {
-  document.getElementById('counter').textContent = store.getState();
-};
+    document.getElementById('counter').textContent = getState().value;
+}
 
-store.subscribe(update); 
+subscribe(update);
 
-document.getElementById('inc').addEventListener('click', () => {
-  store.dispatch(inc())
-});
+// const bindActionCreator = (creator, dispatch) => (...args) => {
+//     dispatch(creator(...args));
+// }
 
-document.getElementById('dec').addEventListener('click', () => {
-  store.dispatch(dec())
-});
+const {inc, dec, rnd} = bindActionCreators( actions, dispatch);
+// const decDispatch = bindActionCreators(dec, dispatch);
+// const rndDispatch = bindActionCreators(rnd, dispatch);
+
+document.getElementById('inc').addEventListener('click', inc);
+
+document.getElementById('dec').addEventListener('click', dec);
 
 document.getElementById('rnd').addEventListener('click', () => {
-  const value = Math.floor(Math.random() * 10);
-  store.dispatch(rnd(value));
+    const value = Math.floor(Math.random() * 10);
+    rnd(value);
 });
 
-
-
-
-
-
-
-
-
-
-
-// let state = reducer(initialState, {type: 'INC'});
-//  state = reducer(state, {type: 'INC'});
-//  state = reducer(state, {type: 'INC'});
-//  state = reducer(state, {type: 'INC'});
-// console.log(state);
-
-
-
-
-ReactDOM.createRoot(document.getElementById('root')).render(
+ReactDOM.render(
   <React.StrictMode>
-   <>
-   </>
-  </React.StrictMode>
+    <>
+    
+    </>
+  </React.StrictMode>,
+  document.getElementById('root')
 );
